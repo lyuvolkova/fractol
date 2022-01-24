@@ -1,4 +1,6 @@
 #include "fractol.h"
+#include "./mlx/mlx.h"
+
 void input_data_help()
 {
     printf("\nIt is necessary to select the input parameter\n");
@@ -11,39 +13,45 @@ int type_fractol(char* name_fractol)
 {
     int i;
 
-    i = 0;
+    i = FRACTOL_UNKNOWN;
     if(ft_strcmp("Julia", name_fractol))
-        i = 1;
+        i = FRACTOL_JULIA;
     else if(ft_strcmp("Mandelbrot", name_fractol))
-        i = 2;
+        i = FRACTOL_MALD;
     return(i);
 
 }
 
 int main(int argc, char** argv)
 {
-    int i;
+    int     a;
+    void    *mlx;
+	void    *mlx_win;
+    t_data img;
 
-    i = 1;
-    if(argc < 2)
+    
+    if(argc != 2)
     {
        input_data_help();
        return(0);
     }
-    while(i < argc)
+	
+    a = type_fractol(argv[1]);
+    if(FRACTOL_UNKNOWN == a)
     {
-        if(!type_fractol(argv[i]))
-            return(1);
-        printf("%d\n",type_fractol(argv[i]));
-        i++;
+        input_data_help();
+        return(0);
     }
-    void	*mlx;
-	void	*mlx_win;
+        
 
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
-	mlx_loop(mlx);
-       
-    return(0);
-
+    mlx = mlx_init();
+	mlx_win = mlx_new_window(mlx, WIDTH, HEIGHT, "Hello world!");
+    img.img = mlx_new_image(mlx, WIDTH, HEIGHT);
+    mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
+								&img.endian);
+    
+    paint_fractol(a, &img);
+    
+    mlx_loop(mlx);
 }
