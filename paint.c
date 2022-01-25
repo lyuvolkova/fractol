@@ -53,32 +53,38 @@ void mandelbrot(t_data *img, int iteration_count)
 {
     int i;
     int y, x;
-    t_complex z, c;
-    t_complex factor;
+    t_complex c;
     t_complex min;
     t_complex max;
-    int width, height;
+    double factor;
+    int size, offset_x, offset_y;
 
-    width = WIDTH;
-    height = HEIGHT;
+    offset_y = (HEIGHT - WIDTH) / 2;
+    offset_x = 0;
+    size = WIDTH;
+    if (size > HEIGHT) {
+        size = HEIGHT;
+        offset_x = (WIDTH - HEIGHT) / 2;
+        offset_y = 0;
+    }
 
+    factor = 4.0 / (double)size;
+    
     min.re = -2.0;
     max.re = 2.0;
     min.im = -2.0;
-    max.im = min.im + (max.re - min.re) * height / width;
-    factor.re = (max.re - min.re) / (width - 1);
-    factor.im = (max.im - min.im) / (height - 1);
+    max.im = 2.0;
+
     y=0;
-    while(y < height)
+    while(y < size)
     {
-        c.im = max.im - y * factor.im;
+        c.im = max.im - y * factor;
         x = 0;
-        while (x < width)
+        while (x < size)
         {
-            c.re = min.re + x * factor.re;
-            z = init_complex(c.re, c.im);
+            c.re = min.re + x * factor;
             i = iterate_mandelbrot(&c);
-            my_mlx_pixel_put(img, x, y, get_color(i, iteration_count));
+            my_mlx_pixel_put(img, x + offset_x, y + offset_y, get_color(i, iteration_count));
             x++;
         }
         y++; 

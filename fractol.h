@@ -2,6 +2,7 @@
 # define FRACTOL_H
 #include "stdio.h"
 #include <math.h>
+#include <stdlib.h>
 #define FRACTOL_UNKNOWN 0
 #define FRACTOL_JULIA 1
 #define FRACTOL_MALD 2

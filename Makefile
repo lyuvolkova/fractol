@@ -14,7 +14,7 @@ $(NAME): $(OBJ)
 	$(CC) $(OBJ) -Lmlx  -lmlx -framework OpenGL -framework AppKit -o $(NAME)
 
 clean:
-			$(RM) $(OBJS)
+			$(RM) $(OBJ)
 
 fclean:		clean
 			$(RM) $(NAME)
