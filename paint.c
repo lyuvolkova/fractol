@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   paint.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qgrodd <qgrodd@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/27 20:16:41 by qgrodd            #+#    #+#             */
+/*   Updated: 2022/01/27 21:48:43 by qgrodd           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fractol.h"
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
@@ -109,44 +121,57 @@ void julia(t_data *img, int iteration_count)
         y++; 
     }
 }
+typedef struct s_offset
+{
+    int x;
+    int y;
+}   t_offset;
 
+typedef struct s_fractol
+{
+    int size; 
+    t_complex c;
+    t_complex min;
+    t_complex max;
+    t_complex k;
+    double factor;
+    t_offset ofst; 
+}       t_fractol;
+
+void init_min_max(t_fractol *fr)
+{
+    fr->min.re = -2.0;
+    fr->max.re = 2.0;
+    fr->min.im = -2.0;
+    fr->max.im = 2.0;
+}
 
 void mandelbrot(t_data *img, int iteration_count)
 {
     int i;
     int y, x;
-    t_complex c;
-    t_complex min;
-    t_complex max;
-    double factor;
-    int size, offset_x, offset_y;
+    t_fractol fr;
 
-    offset_y = (HEIGHT - WIDTH) / 2;
-    offset_x = 0;
-    size = WIDTH;
-    if (size > HEIGHT) {
-        size = HEIGHT;
-        offset_x = (WIDTH - HEIGHT) / 2;
-        offset_y = 0;
+    fr.ofst.y = (HEIGHT - WIDTH) / 2;
+    fr.ofst.x  = 0;
+    fr.size = WIDTH;
+    if (fr.size > HEIGHT) {
+        fr.size  = HEIGHT;
+        fr.ofst.x = (WIDTH - HEIGHT) / 2;
+        fr.ofst.y = 0;
     }
-
-    factor = 4.0 / (double)size;
-    
-    min.re = -2.0;
-    max.re = 2.0;
-    min.im = -2.0;
-    max.im = 2.0;
-
-    y=0;
-    while(y < size)
+    init_min_max(&fr);
+    fr.factor = 4.0 / (double)fr.size;
+    y = 0;
+    while(y < fr.size)
     {
-        c.im = max.im - y * factor;
+        fr.c.im = fr.max.im - y * fr.factor;
         x = 0;
-        while (x < size)
+        while (x < fr.size)
         {
-            c.re = min.re + x * factor;
-            i = iterate_mandelbrot(&c);
-            my_mlx_pixel_put(img, x + offset_x, y + offset_y, get_color(i, iteration_count));
+            fr.c.re = fr.min.re + x * fr.factor;
+            i = iterate_mandelbrot(&fr.c);
+            my_mlx_pixel_put(img, x + fr.ofst.x, y + fr.ofst.y, get_color(i, iteration_count));
             x++;
         }
         y++; 

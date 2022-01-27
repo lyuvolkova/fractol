@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fractol.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qgrodd <qgrodd@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/27 20:16:34 by qgrodd            #+#    #+#             */
+/*   Updated: 2022/01/27 20:16:34 by qgrodd           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FRACTOL_H
 # define FRACTOL_H
 #include "stdio.h"
@@ -6,8 +18,8 @@
 #define FRACTOL_UNKNOWN 0
 #define FRACTOL_JULIA 1
 #define FRACTOL_MALD 2
-#define HEIGHT 768
-#define WIDTH 1024
+#define HEIGHT 1080
+#define WIDTH 1920
 #define MAX_ITERATION 50
 
 typedef struct	s_data {

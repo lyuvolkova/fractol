@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fractol.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qgrodd <qgrodd@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/27 20:15:17 by qgrodd            #+#    #+#             */
+/*   Updated: 2022/01/27 20:15:17 by qgrodd           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fractol.h"
 #include "./mlx/mlx.h"
 
@@ -45,7 +57,7 @@ int main(int argc, char** argv)
         
 
     mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, WIDTH, HEIGHT, "Hello world!");
+	mlx_win = mlx_new_window(mlx, WIDTH, HEIGHT, "Fractol");
     img.img = mlx_new_image(mlx, WIDTH, HEIGHT);
     mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
