@@ -21,7 +21,7 @@
 # define FRACTOL_MALD		2
 # define HEIGHT				800
 # define WIDTH				800
-# define MAX_ITERATION		250
+# define MAX_ITERATION		50
 # define ESC				53
 # define PAD_R				15
 # define ARROW_UP			126
@@ -86,7 +86,7 @@ int     	ft_strcmp(char *s1, char *s2);
 void		move(int key, t_fractol *fr);  
 int			paint_fractol(t_fractol *fr);
 void		my_mlx_pixel_put(t_data *data, int x, int y, int color);
-int			iterate_mandelbrot(t_complex *c);
+int			iterate_mandelbrot(t_complex *c, int max_iteration);
 int			zoom_mouse(int type, int x, int y, t_fractol *fr);
 t_complex	init_complex(double re, double im);
 

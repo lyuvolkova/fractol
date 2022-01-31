@@ -6,7 +6,7 @@
 /*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:52:38 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/01/31 18:28:44 by lubov            ###   ########.fr       */
+/*   Updated: 2022/02/01 00:31:15 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 
 int julia_motion(int x, int y, t_fractol *fr)
 {
-	fr->k = init_complex(
-	4 * ((double)x / WIDTH - 0.5),
-	4 * ((double)(HEIGHT - y) / HEIGHT - 0.5));
-	fr->is_need_render = 1;
-	
+	if(fr->block != 0)
+	{
+		fr->k = init_complex(
+		4 * ((double)x / WIDTH - 0.5),
+		4 * ((double)(HEIGHT - y) / HEIGHT - 0.5));
+		fr->is_need_render = 1;
+	}	
 	return (0);
 }
 
@@ -30,23 +32,23 @@ void move(int key, t_fractol *fr)
 					fabs(fr->max.im - fr->min.im));
 	if (ARROW_UP == key)
 	{
-		fr->min.im += d.im * 0.05;
-		fr->max.im += d.im * 0.05;	
+		fr->min.im -= d.im * 0.05;
+		fr->max.im -= d.im * 0.05;	
 	}
 	else if(ARROW_DOWN == key)
 	{
-		fr->min.im -= d.im * 0.05;
-		fr->max.im -= d.im * 0.05;
+		fr->min.im += d.im * 0.05;
+		fr->max.im += d.im * 0.05;
 	}
 	else if (ARROW_L == key)
 	{
-		fr->min.re -= d.re * 0.05;
-		fr->max.re -= d.re * 0.05;	
+		fr->min.re += d.re * 0.05;
+		fr->max.re += d.re * 0.05;	
 	}
 	else if (ARROW_R == key)
 	{
-		fr->min.re += d.re * 0.05;
-		fr->max.re += d.re * 0.05;	
+		fr->min.re -= d.re * 0.05;
+		fr->max.re -= d.re * 0.05;	
 	}
 }
 

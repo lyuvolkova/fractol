@@ -6,7 +6,7 @@
 /*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 23:23:46 by lubov             #+#    #+#             */
-/*   Updated: 2022/01/31 16:58:18 by lubov            ###   ########.fr       */
+/*   Updated: 2022/02/01 00:57:44 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	color_shift(t_fractol *fr)
 {
-	fr->color_sh += 1;
+	fr->color_sh = ++fr->color_sh % 5;
 }
 
 void	change_max_iteration(int key, t_fractol *fr)
@@ -33,6 +33,8 @@ void	change_max_iteration(int key, t_fractol *fr)
 		else if (fr->max_iter > fr->max_iter - 1)
 			fr->max_iter -= 1;
 	}
+
+	printf("%d\n", fr->max_iter);
 }
 
 int key_press(int key, t_fractol *fr)
@@ -64,7 +66,6 @@ int key_press(int key, t_fractol *fr)
 	}
 	else if (SPACE == key)
 		fr->block = !fr->block;
-	printf("%d ;", fr->block);
 	return (0);
 	
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fractol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgrodd <qgrodd@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:15:17 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/01/27 20:15:17 by qgrodd           ###   ########.fr       */
+/*   Updated: 2022/02/01 01:36:12 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,14 @@ void	init_paint(int type)
 	fr.min = init_complex(-2.0, -2.0);	
 	fr.max = init_complex(2.0, 2.0);
 	fr.color_sh = 0;
-	fr.max_iter = 50;
+	fr.max_iter = MAX_ITERATION;
 	fr.block = 0;
 	fr.k = init_complex(0.6, -0.4);
 	fr.is_need_render = 4;
-	mlx_hook(fr.mlx_win, 2, 1L << 6, key_press, &fr);
+	mlx_key_hook(fr.mlx_win, key_press, &fr);
 	mlx_mouse_hook(fr.mlx_win, zoom_mouse, &fr);
 	mlx_loop_hook(fr.mlx, paint_fractol, &fr);
-	if(FRACTOL_JULIA == fr.type && !fr.block)
+	if(FRACTOL_JULIA == fr.type)
 		mlx_hook(fr.mlx_win, 6, 2L << 6, julia_motion, &fr);
 	mlx_loop(fr.mlx); 
 
