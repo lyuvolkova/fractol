@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paint.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgrodd <qgrodd@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:16:41 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/01/27 21:48:43 by qgrodd           ###   ########.fr       */
+/*   Updated: 2022/02/01 01:07:36 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,194 +22,198 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 
 void fill_rectangle(t_data *img,  int x, int y, int width, int heigth, int color)
 {
-    int i;
-    int j;
+	int i;
+	int j;
 
-    
-    j = y + heigth;
+	
+	j = y + heigth;
 
-    while (y < j)
-    {
-        i = x + width;
-        while(x < i)
-        {
-            my_mlx_pixel_put(img, i, j, color); 
-            i--;    
-        }
-        j--;
-    }
+	while (y < j)
+	{
+		i = x + width;
+		while(x < i)
+		{
+			my_mlx_pixel_put(img, i, j, color); 
+			i--;    
+		}
+		j--;
+	}
 
 }
 t_complex init_complex(double re, double im)
 {
-    t_complex complex;
-    
-    complex.re = re;
-    complex.im = im;
-    return (complex);
+	t_complex complex;
+	
+	complex.re = re;
+	complex.im = im;
+	return (complex);
 }
 
-int get_color(int i, int iteration_count)
+int get_color(int i, int iteration_count, int shift)
 {
-    double t;
-    int red, green, blue;
-    
-    t = (double)i/(double)iteration_count;
-    red = (int)(9 * (1 - t) * pow(t, 3) * 255);
-    green = (int)(15 * pow((1 - t), 2) * pow(t, 2) * 255);
-    blue = (int)(8.5 * pow((1 - t), 3) * t * 255);
-    return (red << 16 | green << 8 | blue);
+	double t;
+	int red, green, blue;
+	t = (double)i/(double)iteration_count;
+	if (shift > 1)
+	{
+		green = (int)((0 + shift)%3 + 1) *(9 * (1 - t) * t * t * t * 255);
+		blue = (int)((1 + shift)%3 + 1)*(15 * (1 - t) * (1 - t) * t * t * 255);
+		red = (int)((2 + shift)%3 + 1)*(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);
+	}
+	else if (shift == 1)
+	{
+		blue = (int)(9 * (1 - t) * t * t * t * 255);
+		red = (int)(15 * (1 - t) * (1 - t) * t * t * 255);
+		green = (int)(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);	
+	}
+	else{
+		red = (int)(9 * (1 - t) * t * t * t * 255);
+		green = (int)(15 * (1 - t) * (1 - t) * t * t * 255);
+		blue = (int)(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);
+	}
+	return (red << 16 | green << 8 | blue);
 }
 
-int iterate_julia(t_complex *c)
+int iterate_julia(t_fractol *fr)
 {
-    int			i;
-	t_complex	z, k;
+	int			i;
+	t_complex	z;
 
 	i = 0;
-    k = init_complex(-0.4, 0.6);
-	z = init_complex(c->re, c->im);
-	while (pow(z.re, 2.0) + pow(z.im, 2.0) <= 4 && i < MAX_ITERATION)
+	
+	z = init_complex(fr->c.re, fr->c.im);
+	while (z.re * z.re + z.im * z.im <= 4 && i < fr->max_iter)
 	{
 		z = init_complex(
-			pow(z.re, 2.0) - pow(z.im, 2.0) + k.re,
-			2.0 * z.re * z.im + k.im);
-            i++;
-    }
-    return(i);
+			z.re * z.re - z.im * z.im + fr->k.re,
+			2.0 * z.re * z.im + fr->k.im);
+			i++;
+	}
+	return(i);
 
 }
 
-void julia(t_data *img, int iteration_count)
+void init_offset(t_fractol *fr)
 {
-    int i;
-    int y, x;
-    t_complex c;
-    t_complex min;
-    t_complex max;
-    double factor;
-    int size, offset_x, offset_y;
+	fr->ofst.y = (HEIGHT - WIDTH) / 2;
+	fr->ofst.x  = 0;
+	fr->size = WIDTH;
+	if (fr->size > HEIGHT) {
+		fr->size = HEIGHT;
+		fr->ofst.x = (WIDTH - HEIGHT) / 2;
+		fr->ofst.y = 0;
+	}
 
-    offset_y = (HEIGHT - WIDTH) / 2;
-    offset_x = 0;
-    size = WIDTH;
-    if (size > HEIGHT) {
-        size = HEIGHT;
-        offset_x = (WIDTH - HEIGHT) / 2;
-        offset_y = 0;
-    }
-
-    factor = 4.0 / (double)size;
-    
-    min.re = -2.0;
-    max.re = 2.0;
-    min.im = -2.0;
-    max.im = 2.0;
-
-    y=0;
-    while(y < size)
-    {
-        c.im = max.im - y * factor;
-        x = 0;
-        while (x < size)
-        {
-            c.re = min.re + x * factor;
-            i = iterate_julia(&c);
-            my_mlx_pixel_put(img, x + offset_x, y + offset_y, get_color(i, iteration_count));
-            x++;
-        }
-        y++; 
-    }
-}
-typedef struct s_offset
-{
-    int x;
-    int y;
-}   t_offset;
-
-typedef struct s_fractol
-{
-    int size; 
-    t_complex c;
-    t_complex min;
-    t_complex max;
-    t_complex k;
-    double factor;
-    t_offset ofst; 
-}       t_fractol;
-
-void init_min_max(t_fractol *fr)
-{
-    fr->min.re = -2.0;
-    fr->max.re = 2.0;
-    fr->min.im = -2.0;
-    fr->max.im = 2.0;
+	fr->factor = init_complex(
+		(fr->max.re - fr->min.re) / WIDTH,
+		(fr->max.im - fr->min.im) / HEIGHT
+	);
 }
 
-void mandelbrot(t_data *img, int iteration_count)
+void julia(t_fractol *fr)
 {
-    int i;
-    int y, x;
-    t_fractol fr;
+	int i;
+	int y, x;
+	
+	init_offset(fr);
 
-    fr.ofst.y = (HEIGHT - WIDTH) / 2;
-    fr.ofst.x  = 0;
-    fr.size = WIDTH;
-    if (fr.size > HEIGHT) {
-        fr.size  = HEIGHT;
-        fr.ofst.x = (WIDTH - HEIGHT) / 2;
-        fr.ofst.y = 0;
-    }
-    init_min_max(&fr);
-    fr.factor = 4.0 / (double)fr.size;
-    y = 0;
-    while(y < fr.size)
-    {
-        fr.c.im = fr.max.im - y * fr.factor;
-        x = 0;
-        while (x < fr.size)
-        {
-            fr.c.re = fr.min.re + x * fr.factor;
-            i = iterate_mandelbrot(&fr.c);
-            my_mlx_pixel_put(img, x + fr.ofst.x, y + fr.ofst.y, get_color(i, iteration_count));
-            x++;
-        }
-        y++; 
-    }
+	y = 0;
+	while(y < fr->size)
+	{
+		fr->c.im = fr->max.im - y * fr->factor.im;
+		x = 0;
+		while (x < fr->size)
+		{
+			fr->c.re = fr->min.re + x * fr->factor.re;
+			i = iterate_julia(fr);
+			my_mlx_pixel_put(&fr->img, x + fr->ofst.x, y + fr->ofst.y, get_color(i, fr->max_iter, fr->color_sh));
+			x++;
+		}
+		y++; 
+	}
+	mlx_put_image_to_window(fr->mlx, fr->mlx_win, fr->img.img, 0 , 0);
 }
 
-int		iterate_mandelbrot(t_complex *c)
+void mandelbrot(t_fractol *fr)
+{
+	int i;
+	int y;
+	int x;
+
+	init_offset(fr);
+	
+	x = 0;
+	y = 0;
+	fr->c.im = fr->max.im - y * fr->factor.im;
+	while(y < fr->size)
+	{
+		if (x < fr->size) {
+			fr->c.re = fr->min.re + x * fr->factor.re;
+			i = iterate_mandelbrot(&fr->c, fr->max_iter);
+			my_mlx_pixel_put(&fr->img, x + fr->ofst.x, y + fr->ofst.y, get_color(i, fr->max_iter, fr->color_sh));
+			x++;
+			continue;
+		}
+		
+		x = 0;
+		y++;
+		fr->c.im = fr->max.im - y * fr->factor.im;
+	}
+	mlx_put_image_to_window(fr->mlx, fr->mlx_win, fr->img.img, 0 , 0);
+}
+
+int		iterate_mandelbrot(t_complex *c, int max_iteration)
 {
 	int			iteration;
 	t_complex	z;
-
+	double p;
+	double p0;
+	
+	p = sqrt((c->re - 1 / 4) * (c->re - 1 / 4) + c->im * c->im);
+	p0 = 1 / 2 - 1 / 2 * cos( atan2(c->im, c->re - 1 / 4));
+	if (p <= p0){
+		return max_iteration;
+	}
+	
 	iteration = 0;
 	z = init_complex(c->re, c->im);
-	while (pow(z.re, 2.0) + pow(z.im, 2.0) <= 4
-		&& iteration < MAX_ITERATION)
+	while (z.re * z.re + z.im * z.im <= 4
+		&& iteration < max_iteration)
 	{
 		z = init_complex(
-			pow(z.re, 2.0) - pow(z.im, 2.0) + c->re,
+			z.re * z.re - z.im * z.im + c->re,
 			2.0 * z.re * z.im + c->im);
 		iteration++;
 	}
 	return (iteration);
 }
 
-void paint_fractol(int type, t_data *img)
-{
-    
-    if(FRACTOL_JULIA == type)
-    {
-        //my_mlx_pixel_put(img, 5, 5, 0x00FF0000);
-        //fill_rectangle(img,5,5,40,100, 0x00FF0000);
-        julia(img, 50);
 
-    }
-    else if(FRACTOL_MALD == type)
-    {
-        //my_mlx_pixel_put(img, 5, 5, 0x000000FF);
-        mandelbrot(img, 50);
-    }
+int paint_fractol(t_fractol *fr)
+{
+	if (!fr->is_need_render) {
+		return (0);
+	}
+
+	if(FRACTOL_JULIA == fr->type)
+	{
+		
+		julia(fr);
+		
+		//my_mlx_pixel_put(img, 5, 5, 0x00FF0000);
+		//fill_rectangle(img,5,5,40,100, 0x00FF0000);
+		
+		//mlx_mouse_hook(img->img, mouse_reaction_click, (void*)&img);
+
+	}
+	else if(FRACTOL_MALD == fr->type)
+	{
+		//my_mlx_pixel_put(img, 5, 5, 0x000000FF);
+		mandelbrot(fr);
+	}
+
+	fr->is_need_render = 0;
+
+	return(0);
 
 }

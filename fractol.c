@@ -11,59 +11,68 @@
 /* ************************************************************************** */
 
 #include "fractol.h"
-#include "./mlx/mlx.h"
 
-void input_data_help()
+void	input_data_help(void)
 {
-    printf("\nIt is necessary to select the input parameter\n");
-    printf("from the following:\n" );
-    printf("   *Julia\n");
-    printf("   *Mandelbrot\n");
-
-}
-int type_fractol(char* name_fractol)
-{
-    int i;
-
-    i = FRACTOL_UNKNOWN;
-    if(ft_strcmp("Julia", name_fractol))
-        i = FRACTOL_JULIA;
-    else if(ft_strcmp("Mandelbrot", name_fractol))
-        i = FRACTOL_MALD;
-    return(i);
-
+	printf("\nIt is necessary to select the input parameter\n");
+	printf("from the following:\n" );
+	printf("   *Julia\n");
+	printf("   *Mandelbrot\n");
 }
 
-int main(int argc, char** argv)
+int	type_fractol(char *name_fractol)
 {
-    int     a;
-    void    *mlx;
-	void    *mlx_win;
-    t_data img;
+	int	i;
 
-    
-    if(argc != 2)
-    {
-       input_data_help();
-       return(0);
-    }
-	
-    a = type_fractol(argv[1]);
-    if(FRACTOL_UNKNOWN == a)
-    {
-        input_data_help();
-        return(0);
-    }
-        
+	i = FRACTOL_UNKNOWN;
+	if (ft_strcmp("Julia", name_fractol))
+		i = FRACTOL_JULIA;
+	else if (ft_strcmp("Mandelbrot", name_fractol))
+		i = FRACTOL_MALD;
+	return(i);
+}
 
-    mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, WIDTH, HEIGHT, "Fractol");
-    img.img = mlx_new_image(mlx, WIDTH, HEIGHT);
-    mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-								&img.endian);
-    
-    paint_fractol(a, &img);
-    
-    mlx_loop(mlx);
+void	init_paint(int type)
+{
+	t_fractol fr;
+
+	fr.type = type;
+	fr.mlx = mlx_init();
+	fr.mlx_win = mlx_new_window(fr.mlx, WIDTH, HEIGHT, "Fractol");
+	fr.img.img = mlx_new_image(fr.mlx, WIDTH, HEIGHT);
+	fr.img.addr = mlx_get_data_addr(fr.img.img, &fr.img.bits_per_pixel,
+		&fr.img.line_length, &fr.img.endian);
+	fr.min = init_complex(-2.0, -2.0);	
+	fr.max = init_complex(2.0, 2.0);
+	fr.color_sh = 0;
+	fr.max_iter = MAX_ITERATION;
+	fr.block = 0;
+	fr.k = init_complex(0.6, -0.4);
+	fr.is_need_render = 4;
+	mlx_key_hook(fr.mlx_win, key_press, &fr);
+	mlx_mouse_hook(fr.mlx_win, zoom_mouse, &fr);
+	mlx_loop_hook(fr.mlx, paint_fractol, &fr);
+	if(FRACTOL_JULIA == fr.type)
+		mlx_hook(fr.mlx_win, 6, 2L << 6, julia_motion, &fr);
+	mlx_loop(fr.mlx); 
+
+}
+
+int	main(int argc, char** argv)
+{
+	int	type;
+
+	if (argc < 2)
+	{
+	   input_data_help();
+	   return (1);
+	}
+	type = type_fractol(argv[1]);
+	if (FRACTOL_UNKNOWN == type)
+	{
+		input_data_help();
+		return (1);
+	}
+	init_paint(type);
+	return(0);
 }
