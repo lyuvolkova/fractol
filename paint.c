@@ -6,7 +6,7 @@
 /*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:16:41 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/01/30 20:36:47 by lubov            ###   ########.fr       */
+/*   Updated: 2022/01/31 18:46:07 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,16 @@ int get_color(int i, int iteration_count, int shift)
 	t = (double)i/(double)iteration_count;
 	if (shift > 2)
 	{
-		red = (int)((0+shift)%3 + 1) *(9 * (1 - t) * pow(t, 3) * 255);
-		green = (int)((1+shift)%3 + 1)*(15 * pow((1 - t), 2) * pow(t, 2) * 250);
-		blue = (int)((2+shift)%3 + 1)*(8.5 * pow((1 - t), 3) * t * 25);
+		red = (int)((0 + shift)%3 + 1) *(9 * (1 - t) * pow(t, 3) * 255);
+		green = (int)((1 + shift)%3 + 1)*(15 * pow((1 - t), 2) * pow(t, 2) * 250);
+		blue = (int)((2 + shift)%3 + 1)*(8.5 * pow((1 - t), 3) * t * 25);
 		
 	}
 	else if (shift == 1)
 	{
-		green = (int)((0+shift)%3 + 1) *(9 * (1 - t) * pow(t, 3) * 200);
-		blue = (int)((0+shift)%3 + 1) *(15 * pow((1 - t), 2) * pow(t, 2) * 25);
-		red = (int)((0+shift)%3 + 1) *(8.5 * pow((1 - t), 3) * t * 100);
+		green = (int)((0+shift)%3 + 1) *(9 * (1 - t) * pow(t, 3) * 255);
+		blue = (int)((0+shift)%3 + 1) *(15 * pow((1 - t), 2) * pow(t, 2) * 255);
+		red = (int)((0+shift)%3 + 1) *(8.5 * pow((1 - t), 3) * t * 255);
 		
 	}
 	else if (shift == 2)
@@ -91,7 +91,7 @@ int iterate_julia(t_fractol *fr)
 	i = 0;
 	
 	z = init_complex(fr->c.re, fr->c.im);
-	while (pow(z.re, 2.0) + pow(z.im, 2.0) <= 4 && i < MAX_ITERATION)
+	while (pow(z.re, 2.0) + pow(z.im, 2.0) <= 4 && i < fr->max_iter)
 	{
 		z = init_complex(
 			pow(z.re, 2.0) - pow(z.im, 2.0) + fr->k.re,
@@ -115,7 +115,7 @@ void init_min_max(t_fractol *fr)
 	//fr->factor = 4.0 / (double)fr->size;
 }
 
-void julia(t_fractol *fr, int iteration_count)
+void julia(t_fractol *fr)
 {
 	int i;
 	int y, x;
@@ -135,7 +135,7 @@ void julia(t_fractol *fr, int iteration_count)
 		{
 			fr->c.re = fr->min.re + x * fr->factor.re;
 			i = iterate_julia(fr);
-			my_mlx_pixel_put(&fr->img, x + fr->ofst.x, y + fr->ofst.y, get_color(i, iteration_count, fr->color_sh));
+			my_mlx_pixel_put(&fr->img, x + fr->ofst.x, y + fr->ofst.y, get_color(i, fr->max_iter, fr->color_sh));
 			x++;
 		}
 		y++; 
@@ -147,13 +147,12 @@ void mandelbrot(t_fractol *fr, int iteration_count)
 {
 	int i;
 	int y, x;
-	//t_fractol fr;
-	
-	//init_min_max(fr);
+
 	fr->ofst.y = 0;
 	fr->ofst.x  = 0;
 	fr->size = WIDTH;
-	fr->factor = init_complex((fr->max.re - fr->min.re) /WIDTH, (fr->max.im - fr->min.im)/HEIGHT);
+	fr->factor = init_complex((fr->max.re - fr->min.re) / WIDTH,
+	 (fr->max.im - fr->min.im) / HEIGHT);
 	y = 0;
 	while(y < fr->size)
 	{
@@ -199,7 +198,7 @@ int paint_fractol(t_fractol *fr)
 	if(FRACTOL_JULIA == fr->type)
 	{
 		
-		julia(fr, MAX_ITERATION);
+		julia(fr);
 		
 		//my_mlx_pixel_put(img, 5, 5, 0x00FF0000);
 		//fill_rectangle(img,5,5,40,100, 0x00FF0000);
