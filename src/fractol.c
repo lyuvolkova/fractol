@@ -6,7 +6,7 @@
 /*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:15:17 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/02/01 01:36:12 by lubov            ###   ########.fr       */
+/*   Updated: 2022/02/01 20:53:00 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	input_data_help(void)
 	printf("from the following:\n" );
 	printf("   *Julia\n");
 	printf("   *Mandelbrot\n");
+	printf("   *Mandelbar\n");
 }
 
 int	type_fractol(char *name_fractol)
@@ -29,20 +30,22 @@ int	type_fractol(char *name_fractol)
 		i = FRACTOL_JULIA;
 	else if (ft_strcmp("Mandelbrot", name_fractol))
 		i = FRACTOL_MALD;
-	return(i);
+	else if (ft_strcmp("Mandelbar", name_fractol))
+		i = FRACTOL_MBAR;
+	return (i);
 }
 
 void	init_paint(int type)
 {
-	t_fractol fr;
+	t_fractol	fr;
 
 	fr.type = type;
 	fr.mlx = mlx_init();
 	fr.mlx_win = mlx_new_window(fr.mlx, WIDTH, HEIGHT, "Fractol");
 	fr.img.img = mlx_new_image(fr.mlx, WIDTH, HEIGHT);
-	fr.img.addr = mlx_get_data_addr(fr.img.img, &fr.img.bits_per_pixel,
-		&fr.img.line_length, &fr.img.endian);
-	fr.min = init_complex(-2.0, -2.0);	
+	fr.img.addr = mlx_get_data_addr(fr.img.img, &fr.img.bits_per_pixel, \
+	&fr.img.line_length, &fr.img.endian);
+	fr.min = init_complex(-2.0, -2.0);
 	fr.max = init_complex(2.0, 2.0);
 	fr.color_sh = 0;
 	fr.max_iter = MAX_ITERATION;
@@ -52,20 +55,19 @@ void	init_paint(int type)
 	mlx_key_hook(fr.mlx_win, key_press, &fr);
 	mlx_mouse_hook(fr.mlx_win, zoom_mouse, &fr);
 	mlx_loop_hook(fr.mlx, paint_fractol, &fr);
-	if(FRACTOL_JULIA == fr.type)
+	if (FRACTOL_JULIA == fr.type)
 		mlx_hook(fr.mlx_win, 6, 2L << 6, julia_motion, &fr);
-	mlx_loop(fr.mlx); 
-
+	mlx_loop(fr.mlx);
 }
 
-int	main(int argc, char** argv)
+int	main(int argc, char **argv)
 {
 	int	type;
 
 	if (argc < 2)
 	{
-	   input_data_help();
-	   return (1);
+		input_data_help();
+		return (1);
 	}
 	type = type_fractol(argv[1]);
 	if (FRACTOL_UNKNOWN == type)
@@ -74,5 +76,5 @@ int	main(int argc, char** argv)
 		return (1);
 	}
 	init_paint(type);
-	return(0);
+	return (0);
 }
