@@ -3,7 +3,7 @@ NAME = fractol
 CC = gcc 
 FLAGS = -Wall -Wextra -Werror
 SRCS = src/fractol.c src/using.c src/paint.c src/key.c \
-		src/paint_mouse.c src/ft_itoa.c
+		src/paint_mouse.c src/ft_itoa.c src/ft_atoi.c
 OBJ = $(SRCS:.c=.o)
 
 %.o: %.c

@@ -6,7 +6,7 @@
 /*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:15:17 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/02/01 20:53:00 by lubov            ###   ########.fr       */
+/*   Updated: 2022/02/02 01:45:23 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ void	input_data_help(void)
 {
 	printf("\nIt is necessary to select the input parameter\n");
 	printf("from the following:\n" );
-	printf("   *Julia\n");
-	printf("   *Mandelbrot\n");
-	printf("   *Mandelbar\n");
+	printf("   *------Julia [k.re k.im]\n");
+	printf("   *------Mandelbrot\n");
+	printf("   *------Mandelbar\n\n");
 }
 
 int	type_fractol(char *name_fractol)
@@ -35,7 +35,7 @@ int	type_fractol(char *name_fractol)
 	return (i);
 }
 
-void	init_paint(int type)
+void	init_paint(int type, double re, double im)
 {
 	t_fractol	fr;
 
@@ -49,9 +49,12 @@ void	init_paint(int type)
 	fr.max = init_complex(2.0, 2.0);
 	fr.color_sh = 0;
 	fr.max_iter = MAX_ITERATION;
-	fr.block = 0;
-	fr.k = init_complex(0.6, -0.4);
-	fr.is_need_render = 4;
+	if (FRACTOL_JULIA == type)
+	{
+		fr.block = 0;
+		fr.k = init_complex(re, im);
+	}
+	fr.is_need_render = 1;
 	mlx_key_hook(fr.mlx_win, key_press, &fr);
 	mlx_mouse_hook(fr.mlx_win, zoom_mouse, &fr);
 	mlx_loop_hook(fr.mlx, paint_fractol, &fr);
@@ -62,7 +65,9 @@ void	init_paint(int type)
 
 int	main(int argc, char **argv)
 {
-	int	type;
+	int		type;
+	double	k_re;
+	double	k_im;
 
 	if (argc < 2)
 	{
@@ -70,11 +75,18 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	type = type_fractol(argv[1]);
-	if (FRACTOL_UNKNOWN == type)
+	if (FRACTOL_UNKNOWN == type || (FRACTOL_JULIA == type && argc == 3))
 	{
 		input_data_help();
 		return (1);
 	}
-	init_paint(type);
+	if (argc == 4)
+	{
+		k_re = ft_s_to_d(argv[2]);
+		k_im = ft_s_to_d(argv[3]);
+		init_paint(type, k_re, k_im);
+	}
+	else
+		init_paint(type, JULIA_K_RE, JULIA_K_IM);
 	return (0);
 }

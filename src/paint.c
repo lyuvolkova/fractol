@@ -6,7 +6,7 @@
 /*   By: lubov <lubov@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 20:16:41 by qgrodd            #+#    #+#             */
-/*   Updated: 2022/02/01 23:16:05 by lubov            ###   ########.fr       */
+/*   Updated: 2022/02/02 01:52:04 by lubov            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	paint_fractol(t_fractol *fr)
 		mandelbrot(fr);
 	s = ft_itoa(fr->max_iter);
 	mlx_string_put(fr->mlx, fr->mlx_win, 15, 15, 0x00FFFFFF, "Iteration: ");
-	mlx_string_put(fr->mlx, fr->mlx_win, 140, 15, 0x00FFFFFF, s);
+	mlx_string_put(fr->mlx, fr->mlx_win, 120, 15, 0x00FFFFFF, s);
 	fr->is_need_render = 0;
 	free(s);
 	return (0);

@@ -38,6 +38,8 @@
 # define SPACE 				49
 # define NUM_PAD_PLUS		69
 # define NUM_PAD_MINUS		78
+# define JULIA_K_RE			-0.4
+# define JULIA_K_IM			0.6
 
 typedef struct s_data
 {
@@ -84,5 +86,6 @@ int			iterate_mandelbrot(t_complex *c, int max_iteration);
 int			zoom_mouse(int type, int x, int y, t_fractol *fr);
 t_complex	init_complex(double re, double im);
 char		*ft_itoa(int n);
+double		ft_s_to_d(char *str);
 
 #endif
