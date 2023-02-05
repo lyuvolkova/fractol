@@ -16,3 +16,6 @@
  * Стрелки - для перемещения;
  * С - смена цвета;
  * Пробел - включение/выключение функции изменения коэффициентов фрактала Julia по координатам мыши.
+
+Фрактал Mandelbrot:
+!(https://github.com/lyuvolkova/fractol/blob/master/img/Mandelbrot.png)
