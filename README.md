@@ -8,7 +8,7 @@
 
     $>./fractol [название_флактала]
     
-Возможные варианты фракталов: Julia, Mandelbrot 
+Возможные варианты фракталов: Julia, Mandelbrot, Mandelbar.
 
 # Функции
 
